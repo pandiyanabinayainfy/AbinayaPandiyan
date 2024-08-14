@@ -1,65 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { fetchTransactions } from '../services/transactionService';
+import useCustomerPoints from './useCustomerPoints';
 import '../App.css';
 
-const calculatePoints = (amount) => {
-  let points = 0;
-  if (amount > 100) {
-    points += (amount - 100) * 2;
-    amount = 100;
-  }
-  if (amount > 50) {
-    points += (amount - 50) * 1;
-  }
-  return points;
-};
-
-const groupByMonth = (transactions) => {
-  const pointsByCustomer = {};
-
-  transactions.forEach(({ customerId, name, mobile, date, amount }) => {
-    const transactionDate = new Date(date);
-    const month = transactionDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-    const points = calculatePoints(amount);
-
-    if (!pointsByCustomer[customerId]) {
-      pointsByCustomer[customerId] = {
-        name,
-        mobile,
-        monthlyPoints: {},
-        totalPoints: 0,
-      };
-    }
-
-    if (!pointsByCustomer[customerId].monthlyPoints[month]) {
-      pointsByCustomer[customerId].monthlyPoints[month] = 0;
-    }
-
-    pointsByCustomer[customerId].monthlyPoints[month] += points;
-    pointsByCustomer[customerId].totalPoints += points;
-  });
-
-  return pointsByCustomer;
-};
-
 const RewardPoints = () => {
-  const [pointsData, setPointsData] = useState(null);
+  const {customerPointsData, loading, error} = useCustomerPoints()
   const [searchTerm, setSearchTerm] = useState('');
-
-  useEffect(() => {
-    fetchTransactions().then((transactions) => {
-      const groupedData = groupByMonth(transactions);
-      setPointsData(groupedData);
-    });
-  }, []);
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
 
-  const filteredData = pointsData
-    ? Object.keys(pointsData).filter(customerId => {
-        const customer = pointsData[customerId];
+  const filteredData = customerPointsData
+    ? Object.keys(customerPointsData).filter(customerId => {
+        const customer = customerPointsData[customerId];
         return (
           customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           customer.mobile.includes(searchTerm)
@@ -67,8 +20,18 @@ const RewardPoints = () => {
       })
     : [];
 
+    if (loading) {  return (
+      <div className='loading'>
+      <div className='spinner'></div>
+    </div>
+    ) }
+    
+    if (error) return <p className='error'>{error}</p>;
+  
+  
+
   return (
-    <div>
+    <div className='reward-points-container'>
       <h1>Reward Points</h1>
       <input
         type="text"
@@ -79,17 +42,17 @@ const RewardPoints = () => {
       />
       {filteredData.length > 0 ? (
         filteredData.map(customerId => (
-          <div className="customer" key={customerId}>
-            <h2>{pointsData[customerId].name}</h2>
-            <p>Mobile: {pointsData[customerId].mobile}</p>
-            {Object.keys(pointsData[customerId].monthlyPoints).map(month => (
-              <p key={month}>{month}: {pointsData[customerId].monthlyPoints[month]} points</p>
+          <div className='customer' key={customerId}>
+            <h2>{customerPointsData[customerId].name}</h2>
+            <p className='data-design'>Mobile: <span className='unique-color'> {customerPointsData[customerId].mobile}</span></p>
+            {Object.keys(customerPointsData[customerId].monthlyPoints).map(month => (
+              <p className='data-design' key={month}>{month}: <span className='unique-color'> {customerPointsData[customerId].monthlyPoints[month]} </span> points</p>
             ))}
-            <h3>Total Points in Last 3 Months: {pointsData[customerId].totalPoints} points</h3>
+            <h3>Total Points in Last 3 Months: <span className='unique-color'>{customerPointsData[customerId].totalPoints}</span> points</h3>
           </div>
         ))
       ) : (
-        <p className="loading">No results found.</p>
+        <p className='loading'>No results found.</p>
       )}
     </div>
   );

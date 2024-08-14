@@ -26,7 +26,7 @@ h2 {
 }
 
 p {
-  color: #666;
+  color: #6a0fbe;
   padding: 10px 0;
   border-bottom: 1px solid #e0e0e0;
 }
@@ -41,16 +41,63 @@ p:last-child {
 }
 
 .loading {
-  text-align: center;
-  color: #999;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
 }
-
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(0,0,0,0.1);
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.reward-points-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #1dc4b6;
+}
 .search-bar {
   width: 100%;
   padding: 10px;
   margin-bottom: 20px;
+  margin-left: -10px;
   border-radius: 4px;
   border: 1px solid #ccc;
   font-size: 16px;
+
 }
+.customer {
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+.loading, .error {
+  text-align: center;
+  font-size: 18px;
+  color: #666;
+}
+
+.data-design {
+  color: #8f9e08;
+}
+
+.unique-color {
+  color: #eb0570 ;
+}
+
 
