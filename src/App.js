@@ -1,12 +1,16 @@
-import React from 'react';
-import RewardPoints from './components/rewardPoints';
+import React, { Suspense } from 'react'
+const RewardPoints = React.lazy(() => import ('./components/rewardPoints'))
 
 function App() {
   return (
     <div className="App">
-      <RewardPoints />
+      <h1>Welcome to the Reward board</h1>
+      <Suspense>
+        <RewardPoints />
+      </Suspense>
+      
     </div>
   );
 }
 
-export default App;
+export default App

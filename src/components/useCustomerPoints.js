@@ -13,7 +13,7 @@ const useCustomerPoints = () => {
     const fetchData = async () => {
       try {
         setLoading(true)
-        setError(null)
+        setError(false)
 
         const transactions = await fetchTransactions({ signal })
         const groupedData = groupTransactionsByMonth(transactions)
