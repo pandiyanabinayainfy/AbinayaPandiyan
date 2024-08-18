@@ -28,10 +28,10 @@ const useCustomerPoints = () => {
       }
     };
 
-    fetchData();
+    fetchData()
 
     return () => controller.abort()
-  }, []);
+  }, [])
 
   return { customerPointsData, loading, error }
 };

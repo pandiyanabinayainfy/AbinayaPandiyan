@@ -5,7 +5,7 @@ function App() {
   return (
     <div className="App">
       <h1>Welcome to the Reward board</h1>
-      <Suspense>
+      <Suspense fallback={<>Calculating reward points...</>}>
         <RewardPoints />
       </Suspense>
       

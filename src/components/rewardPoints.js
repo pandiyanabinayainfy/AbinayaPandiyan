@@ -1,45 +1,46 @@
 import React, { useState } from 'react'
 import useCustomerPoints from './useCustomerPoints'
-import { filterCustomerData } from './utils'
+import { filterCustomerData } from '../utils/utils'
+import Loader from '../utils/loader'
 import '../App.css'
 
 const RewardPoints = () => {
-  const { customerPointsData, loading, error } = useCustomerPoints();
-  const [searchTerm, setSearchTerm] = useState('');
+  const { customerPointsData, loading, error } = useCustomerPoints()
+  const [searchTerm, setSearchTerm] = useState('')
 
   const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-  }
+    setSearchTerm(e.target.value)
+  };
 
-  const filteredData = filterCustomerData(customerPointsData, searchTerm);
+  const filteredData = filterCustomerData(customerPointsData, searchTerm)
 
   const renderContent = () => {
-  if (loading) {
-    return (
-      <div className="loading-container">
-        <div className="spinner"></div>
-      </div>
-    )
-  }
+    if (loading) {
+      return <Loader />
+    }
 
-  if (error) {
-    return <p className="error">{error}</p>;
-  }
-  if(filteredData.length > 0) { 
-    return filteredData.map(customerId => (
-      <div className='customer' key={customerId}>
-        <h2>{customerPointsData[customerId].name}</h2>
-        <p className='data-design'>Mobile: <span className='unique-color'> {customerPointsData[customerId].mobile}</span></p>
-        {Object.keys(customerPointsData[customerId].monthlyPoints).map(month => (
-          <p className='data-design' key={month}>{month}: <span className='unique-color'> {customerPointsData[customerId].monthlyPoints[month]} </span> points</p>
-        ))}
-        <h3>Total Points in Last 3 Months: <span className='unique-color'>{customerPointsData[customerId].totalPoints}</span> points</h3>
-      </div>
-    ))
-  }
-    return <p className='loading'>No results found.</p>
-  }
+    if (error) {
+      return <p className="error">{error}</p>
+    }
 
+    if (filteredData.length > 0) {
+      return filteredData.map(customerId => {
+        const customer = customerPointsData[customerId]
+
+        return (
+          <div className="customer" key={customerId}>
+            <h2>{customer.name}</h2>
+            <p>Mobile: {customer.mobile}</p>
+            {Object.keys(customer.monthlyPoints).map(month => (
+              <p className='data-design' key={month}>{month}:<span className='unique-color>'> {customer.monthlyPoints[month]} </span> points</p>
+            ))}
+            <h3>Total Points in Last 3 Months: <span className='unique-color'> {customer.totalPoints} </span> points</h3>
+          </div>
+        )
+      })
+    }
+    return <p>No results found.</p>
+  }
   return (
     <div className="reward-points-container">
       <h1>Reward Points</h1>
@@ -49,8 +50,11 @@ const RewardPoints = () => {
         value={searchTerm}
         onChange={handleSearch}
         className="search-bar"
+        aria-label="Search customers by name or mobile number"
       />
-      {renderContent()}
+      <div role="list">
+        {renderContent()}
+      </div>
     </div>
   )
 }
